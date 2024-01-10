@@ -23,7 +23,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>PyMafia</string>
   </property>
   <property name="styleSheet">
    <string notr="true">background-color: rgb(25, 25, 25)
