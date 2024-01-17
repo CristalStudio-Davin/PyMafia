@@ -68,10 +68,8 @@ class logWindow(QMainWindow, form2):
                 bytesLen = int(Bytes.decode())
                 data = conn.recv(bytesLen)
                 dictData = json.loads(data)
-
                 if not data:
                     break
-
                 if dictData["request"] == "join":
                     self.connIDList.append(dictData["id"])
                     print(self.connList)
