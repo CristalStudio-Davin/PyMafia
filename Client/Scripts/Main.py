@@ -72,7 +72,7 @@ class MessageWindow(QMainWindow, mainWindow):
     def exit_button_clicked(self):
         offMessageBox = QMessageBox()
         offMessageBox.setStyleSheet("QMessageBox {color: rgb(255,255,255)}")
-        offMessageBox.question(self, "방 퇴장", "방에서 퇴장 하시겠습니까?")
+        offMessageBox.question(self, "방 퇴장", "방에서 퇴장 하시겠습니까?", QMessageBox.Yes | QMessageBox.No)
 
         if offMessageBox == QMessageBox.Yes:
             self.exitEvent()
@@ -81,7 +81,9 @@ class MessageWindow(QMainWindow, mainWindow):
             pass
 
     def closeEvent(self, close):
-        offMessageBox = QMessageBox.question(self, "방 퇴장", "방에서 퇴장하고 게임을 종료하시겠습니까?", QMessageBox.Yes | QMessageBox.No)
+        offMessageBox = QMessageBox()
+        offMessageBox.setStyleSheet("QMessageBox {color: rgb(255,255,255)}")
+        offMessageBox.question(self, "방 퇴장", "방에서 퇴장하고 게임을 종료하시겠습니까?", QMessageBox.Yes | QMessageBox.No)
 
         if offMessageBox == QMessageBox.Yes:
             self.exitEvent()
