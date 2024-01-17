@@ -67,23 +67,20 @@ class MessageWindow(QMainWindow, mainWindow):
         dataLen = len(jsonData.encode())
         message = str(dataLen).rjust(4, '0') + jsonData
         self.clientSocket.send(message.encode())
-        self.lineEdit.setText("")
+        self.Message.setText("")
 
     def exit_button_clicked(self):
-        offMessageBox = QMessageBox()
-        offMessageBox.setStyleSheet("QMessageBox {color: rgb(255,255,255)}")
-        offMessageBox.question(self, "방 퇴장", "방에서 퇴장 하시겠습니까?", QMessageBox.Yes | QMessageBox.No)
+        offMessageBox = QMessageBox.question(self, "방 퇴장", "방에서 퇴장 하시겠습니까?", QMessageBox.Yes | QMessageBox.No)
 
         if offMessageBox == QMessageBox.Yes:
             self.exitEvent()
+            self.hide()
             controller.start_window()
         else:
             pass
 
     def closeEvent(self, close):
-        offMessageBox = QMessageBox()
-        offMessageBox.setStyleSheet("QMessageBox {color: rgb(255,255,255)}")
-        offMessageBox.question(self, "방 퇴장", "방에서 퇴장하고 게임을 종료하시겠습니까?", QMessageBox.Yes | QMessageBox.No)
+        offMessageBox = QMessageBox.question(self, "방 퇴장", "방에서 퇴장하고 게임을 종료하시겠습니까?", QMessageBox.Yes | QMessageBox.No)
 
         if offMessageBox == QMessageBox.Yes:
             self.exitEvent()
@@ -122,9 +119,9 @@ class WindowController:
 
     def main_window(self):
         self.mainPage = MessageWindow()
+
         self.startPage.hide()
         self.mainPage.show()
-
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
