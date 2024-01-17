@@ -58,16 +58,19 @@ class MessageWindow(QMainWindow, mainWindow):
         self.InfoLabel.setText("방의 주소: %s | 닉네임: %s" %(controller.room_address, controller.player_nickname))
 
     def chat_button_clicked(self):
-        inputMessage = self.Message.text()
-        data = dict()
-        data["id"] = controller.ID
-        data["request"] = "chat"
-        data["message"] = inputMessage
-        jsonData = json.dumps(data)
-        dataLen = len(jsonData.encode())
-        message = str(dataLen).rjust(4, '0') + jsonData
-        self.clientSocket.send(message.encode())
-        self.Message.setText("")
+        try:
+            inputMessage = self.Message.text()
+            data = dict()
+            data["id"] = controller.player_nickname
+            data["request"] = "chat"
+            data["message"] = inputMessage
+            jsonData = json.dumps(data)
+            dataLen = len(jsonData.encode())
+            message = str(dataLen).rjust(4, '0') + jsonData
+            self.clientSocket.send(message.encode())
+            self.Message.setText("")
+        except Exception as e:
+            print(str(e))
 
     def exit_button_clicked(self):
         offMessageBox = QMessageBox.question(self, "방 퇴장", "방에서 퇴장 하시겠습니까?", QMessageBox.Yes | QMessageBox.No)
