@@ -4,10 +4,31 @@ from PyQt5 import uic
 from PyQt5.QtCore import *
 import socket
 import threading
+import time
+import random
 import json
 form = uic.loadUiType("create_room.ui")[0]
 form2 = uic.loadUiType("server_log.ui")[0]
-class MyWindow(QMainWindow, form):
+class GameManager:
+    def __init__(self,user):
+        self.users=int(user)
+        self.jobdict={'mafia':0,'police':1,'medic':2,'person':3}
+        self.joblist=[]
+        self.usertojob={8:[0,0,1,2,3,3,3,3],9:[0,0,1,2,2,3,3,3,3],10:[0,0,0,1,2,2,3,3,3,3],11:[0,0,0,1,1,2,2,3,3,3,3],12:[0,0,0,1,1,2,2,3,3,3,3,3]}
+    def jobsel(self):
+        self.joblist=self.usertojob[self.users]
+        random.shuffle(self.joblist)
+        print(self.joblist)
+    def meetingtime(self,second):
+        time.sleep(second)
+    def nighttime(self,second):
+        time.sleep(second)
+    def votetime(self,second):
+        time.sleep(second)
+    def yesornotime(self,second):
+        time.sleep(second)
+
+class CreateRoom(QMainWindow, form):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
@@ -32,7 +53,7 @@ class logWindow(QMainWindow, form2):
         self.setWindowFlags(Qt.WindowTitleHint | Qt.WindowMinimizeButtonHint | Qt.WindowMaximizeButtonHint)
         self.messageview.setReadOnly(True)
         self.User.setReadOnly(True)
-        self.createw=MyWindow()
+        self.createw=CreateRoom()
         self.ip=ip
         self.port=port
         self.initUI()
@@ -128,6 +149,6 @@ class logWindow(QMainWindow, form2):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    window = MyWindow()
+    window = CreateRoom()
     window.show()
     sys.exit(app.exec_())
