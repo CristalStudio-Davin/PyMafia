@@ -20,8 +20,8 @@ class StartWindow(QMainWindow, startWindow):
             QMessageBox.information(self, "방 입장 불가능", "방에 입장하기 위한 모든 항목을 입력해야 합니다.")
         else:
             controller.room_address = self.Server_Address.text()
-            controller.player_nickname = self.Server_Port.text()
-            controller.room_port = self.Nickname.text()
+            controller.player_nickname = self.Nickname.text()
+            controller.room_port = self.Server_Port.text()
             controller.main_window()
 
 
@@ -32,6 +32,7 @@ class MessageWindow(QMainWindow, mainWindow):
         self.clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.setup()
         self.MessageButton.clicked.connect(self.chat_button_clicked)
+        self.ExitButton.clicked.connect(self.exit_button_clicked)
 
     def worker(self, conn):
         while True:
@@ -41,7 +42,7 @@ class MessageWindow(QMainWindow, mainWindow):
             data = json.loads(gotMessage)
 
             if "users" in data:
-                self.plainTextEdit_2.setPlainText("")
+                self.UserBox.setPlainText("")
                 for i in range(0, len(data["users"])):
                     self.UserBox.insertPlainText("* %s\n" % data["users"][i])
 
@@ -49,18 +50,11 @@ class MessageWindow(QMainWindow, mainWindow):
             self.MessageBox.insertPlainText("%s\n" % message)
 
     def setup(self):
-        self.clientSocket.connect((controller.serverIP, int(controller.port)))
+        self.clientSocket.connect((controller.room_address, int(controller.room_port)))
         th = threading.Thread(target=self.worker, name="[스레드 이름 {}]".format(self.clientSocket),
                               args=(self.clientSocket,))
         th.start()
-
-        data = dict()
-        data["id"] = controller.ID
-        data["request"] = "join"
-        jsonData = json.dumps(data)
-        dataLen = len(jsonData.encode())
-        message = str(dataLen).rjust(4, '0') + jsonData
-        self.clientSocket.send(message.encode())
+        self.joinEvent()
         self.InfoLabel.setText("방의 주소: %s | 닉네임: %s" %(controller.room_address, controller.player_nickname))
 
     def chat_button_clicked(self):
@@ -75,21 +69,43 @@ class MessageWindow(QMainWindow, mainWindow):
         self.clientSocket.send(message.encode())
         self.lineEdit.setText("")
 
+    def exit_button_clicked(self):
+        offMessageBox = QMessageBox()
+        offMessageBox.setStyleSheet("QMessageBox {color: rgb(255,255,255)}")
+        offMessageBox.question(self, "방 퇴장", "방에서 퇴장 하시겠습니까?")
+
+        if offMessageBox == QMessageBox.Yes:
+            self.exitEvent()
+            controller.start_window()
+        else:
+            pass
+
     def closeEvent(self, close):
         offMessageBox = QMessageBox.question(self, "방 퇴장", "방에서 퇴장하고 게임을 종료하시겠습니까?", QMessageBox.Yes | QMessageBox.No)
 
         if offMessageBox == QMessageBox.Yes:
-            data = dict()
-            data["id"] = controller.ID
-            data["request"] = "quit"
-            jsonData = json.dumps(data)
-            dataLen = len(jsonData.encode())
-            message = str(dataLen).rjust(4, '0') + jsonData
-            self.clientSocket.send(message.encode())
-
+            self.exitEvent()
             close.accept()
         else:
             close.ignore()
+
+    def joinEvent(self):
+        data = dict()
+        data["id"] = controller.player_nickname
+        data["request"] = "join"
+        jsonData = json.dumps(data)
+        dataLen = len(jsonData.encode())
+        message = str(dataLen).rjust(4, '0') + jsonData
+        self.clientSocket.send(message.encode())
+
+    def exitEvent(self):
+        data = dict()
+        data["id"] = controller.player_nickname
+        data["request"] = "quit"
+        jsonData = json.dumps(data)
+        dataLen = len(jsonData.encode())
+        message = str(dataLen).rjust(4, '0') + jsonData
+        self.clientSocket.send(message.encode())
 
 
 class WindowController:

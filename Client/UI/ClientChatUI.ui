@@ -177,7 +177,7 @@ color: rgb(255, 255, 255);</string>
     <set>Qt::AlignCenter</set>
    </property>
   </widget>
-  <widget class="QPushButton" name="MessageButton_2">
+  <widget class="QPushButton" name="ExitButton">
    <property name="geometry">
     <rect>
      <x>300</x>
