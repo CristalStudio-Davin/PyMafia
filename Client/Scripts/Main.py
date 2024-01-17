@@ -58,7 +58,7 @@ class MessageWindow(QMainWindow, mainWindow):
         self.InfoLabel.setText("방의 주소: %s | 닉네임: %s" %(controller.room_address, controller.player_nickname))
 
     def chat_button_clicked(self):
-        inputMessage = self.lineEdit.text()
+        inputMessage = self.Message.text()
         data = dict()
         data["id"] = controller.ID
         data["request"] = "chat"
